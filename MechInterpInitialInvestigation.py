@@ -32,7 +32,7 @@ def store_hook(act, hook):
 
 # Pass through GPT-2 and extract activations
 with torch.no_grad():
-    _ = model.run_with_hooks(tokens, fwd_hooks=[("blocks.8.hook_resid_pre", store_hook)])
+    model.run_with_hooks(tokens, fwd_hooks=[("blocks.8.hook_resid_pre", store_hook)])
 
 # Get the stored activations
 activations = stored_activations[0]
