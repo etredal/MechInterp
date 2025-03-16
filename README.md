@@ -27,12 +27,15 @@ combination of neuron activations are needed to trigger a certain feature in a m
 Sparse Autoencoder: A type of encoder that allows us to force sparsity, meaning that it requires
 an individual neuron or a sparse set of neurons to fire for a given neuron.
 
+You should also brush up on Python, NumPy, Basics of Transformers/Neural Networks, and Statistics
+before working through this.
+
 # Initial Investigation
 Let's just get started in the easiest way possible, we will be looking at gpt2-small so we have a
 model that can actually run locally.  We will also be using "sae_lens" which is a library with a
 whole set of pretrained Sparse Autoencoders we can use!  And indeed they have one for gpt2-small.
 
-So let's take a look at and try running it locally: MechInterpInitialInvestigation.py
+So let's take a look at and try running it locally: [Mech Interp Initial Investigation Script](./MechInterpInitialInvestigation.py)
 
 Looking through the code, we are first loading in the models.  Then we set our own input text,
 which can be any string!  After that we need to "hook" the activations.  This is so we can pass
@@ -67,4 +70,47 @@ So now with this, the opportunities are endless!  And what Anthropic was able to
 attach more meaning to a feature by trying out many different prompts and finding overlap of feature activation.
 So let's try this out ourselves in a new script!
 
+Extra Credit:  
+I highly recommend checking out [Transluce Monitor](https://monitor.transluce.org/dashboard/chat), this is a startup
+that has created an interactive dashboard to investigate individual features of a model!  Although they have just a
+few examples it highlights how powerful this research can be.
+
 # Mapping Features to Meaning
+Now let's try making some actual discoveries now that we understand the basics!  To do this we need to think about
+the tools that we have at our disposal.  We can input text to the model, we can analyze the feature activations,
+and (I am assuming) we have some basic understanding of statistics and numpy.  So what we can do is iteratively pass
+in different prompts and try to force certain features to activate as mentioned previously.  Then we analyze the
+results to prove that with a high statistical probability that this feature is being activated due to properties
+of the prompt.
+
+Let's create happy prompts, angry prompts, and baseline prompts.  The baseline should just be random statements which
+will help us to see which features are activated consistently.  As mentioned before, sometimes there are features that
+may just be activated due to common concepts such as using a noun in a sentence.  If you played around with the prompt
+yourself you probably discovered the top few features are always consistently there, so we do not want to attribute
+this to the concepts we are trying to force with our own prompts.
+
+Let's get started: [Mech Interp Feature Meaning Script](./MechInterpFeatureMeaning.py)
+
+Effectively we start out by doing the same thing as last time, except on a 7 prompts for happy, angry, and baseline.
+Then let's print out these results so we can take a look at the features and cluster them.  Let's also visualize the
+happy statements:
+
+![Showing Images](Images/MI2.png)
+
+It is difficult to visualize the difference between the different statements here as the top 8 features always have
+such high activations.  So we will actually want to remove these, as we saw in the printed outputs these are always
+appearing so they are general activations that are occurring.
+
+Coming Soon:  
+This chapter is not finished yet!  We still have more to explore such as "Statistics to determine feature activation"
+
+# Coming Soon: Training Our Own SAE
+Coming Soon:  
+Learn about the cfg dict, feature dict  
+Train our own SAE  
+
+# Coming Soon: Feature to Weights on a Model
+
+# Coming Soon: Ablating/Stimulating a Model
+
+# Coming Soon: MORE
