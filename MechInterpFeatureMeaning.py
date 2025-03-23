@@ -97,8 +97,11 @@ for i in range(len(happy_statements)):  # Assuming there are 7 happy statements
     plt.scatter(feature_indices, happy_feature_means[i], 
                alpha=0.5, s=20, label=f'Happy Statement {i+1}')
 
+print()
+print("Click out of the plot to continue.")
+
 # Label the axes and the plot
-plt.title('Feature Activations Across 7 Happy Statements', fontsize=14)
+plt.title('Feature Activations Across 7 Happy Statements.  CLICK EXIT TO CONTINUE RUNNING THE CODE', fontsize=14)
 plt.xlabel('Feature Index', fontsize=12)
 plt.ylabel('Activation Strength', fontsize=12)
 plt.grid(True, linestyle='--', alpha=0.3)
@@ -106,3 +109,74 @@ plt.legend()
 
 # Show the plot
 plt.show()
+
+# Find the intersection of top 20 features between happy and baseline
+common_features_happy = np.intersect1d(top_20_happy, top_20_baseline)
+common_features_angry = np.intersect1d(top_20_angry, top_20_baseline)
+
+print()
+print("Common features in top 20 for Happy and Baseline:", common_features_happy)
+print("Common features in top 20 for Angry and Baseline:", common_features_angry)\
+
+# Remove all the common features
+happy_activations_filtered = [np.delete(statement, common_features_happy, axis=1) for statement in happy_activations]
+angry_activations_filtered = [np.delete(statement, common_features_angry, axis=1) for statement in angry_activations]
+
+# Get the means across the tokens for each statement
+happy_feature_means_filtered = [np.mean(statement, axis=0) for statement in happy_activations_filtered]
+angry_feature_means_filtered = [np.mean(statement, axis=0) for statement in angry_activations_filtered]
+
+# Graph the filtered happy activations
+plt.figure(figsize=(14, 8))
+
+# Get number of features
+num_features = len(happy_feature_means_filtered[0])
+feature_indices = np.arange(num_features)
+
+# Plot each happy statement's features separately
+for i in range(len(happy_statements)):  # Assuming there are 7 happy statements
+    plt.scatter(feature_indices, happy_feature_means_filtered[i], 
+               alpha=0.5, s=20, label=f'Happy Statement {i+1}')
+    
+print()
+print("Click out of the plot to continue.")
+
+# Label the axes and the plot
+plt.title('Feature Activations Across 7 Happy Statements After Filtering Common Features.  CLICK EXIT TO CONTINUE RUNNING THE CODE', fontsize=14)
+plt.xlabel('Feature Index', fontsize=12)
+plt.ylabel('Activation Strength', fontsize=12)
+plt.grid(True, linestyle='--', alpha=0.3)
+plt.legend()
+
+# Show the plot
+plt.show()
+
+# Convert list of activations to NumPy array
+feature_matrix = np.array([statement.mean(axis=0) for statement in happy_activations_filtered])  # Shape (7, num_features)
+
+# Identify features that have at least an activation of 0.5
+non_zero_percentage = np.sum(feature_matrix > 0.5, axis=0) / feature_matrix.shape[0]
+
+# Select features that are active in at least 75% of statements (adjust threshold as needed)
+meaningful_features = non_zero_percentage >= 0.75
+feature_matrix_filtered = feature_matrix[:, meaningful_features]
+
+# Compute correlation matrix for meaningful features
+correlation_matrix = np.corrcoef(feature_matrix_filtered, rowvar=False)  # Shape (num_filtered_features, num_filtered_features)
+
+# Get average correlation for each feature with other features
+feature_mean_corrs = np.mean(correlation_matrix, axis=1)
+
+# Get indices of top correlated features
+top_n = 20  # Adjust as needed
+top_indices = np.argsort(feature_mean_corrs)[-top_n:][::-1]
+
+# Map back to original feature indices
+original_indices = np.where(meaningful_features)[0][top_indices]
+
+# Print top correlated features
+print("\nTop Features with Highest Mean Correlation:")
+for i, (orig_idx, corr) in enumerate(zip(original_indices, feature_mean_corrs[top_indices])):
+    print(f"Rank {i+1}: Feature {orig_idx} - Avg Correlation {corr:.3f}")
+
+

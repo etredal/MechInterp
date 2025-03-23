@@ -75,7 +75,7 @@ I highly recommend checking out [Transluce Monitor](https://monitor.transluce.or
 that has created an interactive dashboard to investigate individual features of a model!  Although they have just a
 few examples it highlights how powerful this research can be.
 
-# Mapping Features to Meaning
+# Finding the most important features
 Now let's try making some actual discoveries now that we understand the basics!  To do this we need to think about
 the tools that we have at our disposal.  We can input text to the model, we can analyze the feature activations,
 and (I am assuming) we have some basic understanding of statistics and numpy.  So what we can do is iteratively pass
@@ -87,7 +87,9 @@ Let's create happy prompts, angry prompts, and baseline prompts.  The baseline s
 will help us to see which features are activated consistently.  As mentioned before, sometimes there are features that
 may just be activated due to common concepts such as using a noun in a sentence.  If you played around with the prompt
 yourself you probably discovered the top few features are always consistently there, so we do not want to attribute
-this to the concepts we are trying to force with our own prompts.
+this to the concepts we are trying to force with our own prompts.  
+
+Additionally, it’s important to clarify a key decision made during data extraction. The code provided uses the mean to calculate the activation level, but it’s also possible to use the maximum value instead. Each approach has its trade-offs. Using the mean accounts for the attention mechanism, as it considers the activation across neighboring words, which can provide a more comprehensive representation.  Especially with differing token length this could become a problem.  Think of a case where there's a few "Happy" words at the beginning of a sentence, but after many many tokens there are no more "Happy" words.  Since it is using a mean, it could have a detrimental effect on showing how strongly a feature activated.  So, using the maximum value can be advantageous if a feature is strongly activated by a single word, even when there are multiple tokens. Since we’re not keeping the tokens consistent, using the mean has implications on the analysis.  But for now we just want to make some progress even if there are some choices in data transformation that could have been better.
 
 Let's get started: [Mech Interp Feature Meaning Script](./MechInterpFeatureMeaning.py)
 
@@ -95,22 +97,30 @@ Effectively we start out by doing the same thing as last time, except on a 7 pro
 Then let's print out these results so we can take a look at the features and cluster them.  Let's also visualize the
 happy statements:
 
-![Showing Images](Images/MI2.png)
+![All Features](Images/MI2.png)
 
 It is difficult to visualize the difference between the different statements here as the top 8 features always have
 such high activations.  So we will actually want to remove these, as we saw in the printed outputs these are always
-appearing so they are general activations that are occurring.
+appearing so they are general activations that are occurring.  After closing the plotted graph.  We can use code to see there is an intersection between Happy and Baseline, and Angry and Baseline for the features.  Now let's remove these and try again.  We will just remove the 10 features that are intersecting across all types of statements, because we cannot derive anything meaningful from them.  It is a positive sign that the same features are overlapping between the Happy and Angry statements with baseline so that's why it's fine to just remove them.
 
-Coming Soon:  
-This chapter is not finished yet!  We still have more to explore such as "Statistics to determine feature activation"
+![Happy Statement Filtered Features](Images/MI3.png)
 
-# Coming Soon: Training Our Own SAE
-Coming Soon:  
+This still looks messy but now we are much closer.  What this shows is the mean activation strength for each feature across all the features.  Look closely at this for vertical "lines" of dots.  This would indicate that this feature was activated across all the statements.  This is how we can start to derive the meaning of the feature having to do with happiness in this case.
+
+Now with some simple Highest Mean Correlation statistical analysis from Numpy, it is possible to get the highest ranking features in terms of correlation.  In doing this, the code will also filter out features that are activating at too low of a level.  The requirements are quite strict requesting the feature activates at over 0.5 for each statement in the feature matrix, and also activating above this threshold in 75% or more of the statements.  Only 4 results come back.  This does look quite promising, so next time, the features can be further investigated.  Try to see if you can inspect about where they are on the plot and see if you can see a distinctive "line".
+
+Top 4 Happy Features  
+Rank 1: Feature 21033 - Avg Correlation 0.573  
+Rank 2: Feature 10897 - Avg Correlation 0.518  
+Rank 3: Feature 11710 - Avg Correlation 0.472  
+Rank 4: Feature 8168 - Avg Correlation 0.180  
+
+# Potential Future Topics: Understanding the features and weights
+
+# Potential Future Topics: Ablating/Stimulating a Model
+
+# Potential Future Topics: Training Our Own SAE 
 Learn about the cfg dict, feature dict  
 Train our own SAE  
 
-# Coming Soon: Feature to Weights on a Model
-
-# Coming Soon: Ablating/Stimulating a Model
-
-# Coming Soon: MORE
+# Potential Future Topics: MORE
