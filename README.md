@@ -1,5 +1,8 @@
 # Mechanistic Interpretability
 Mechanistic Interpretability Research  
+Thanks to: Nick for providing his insights on AI, statistics, and other relevant domains,
+Sasha for his advanced knowledge in Mech Interp, and Gustav for his support in teaching
+AI architecture fundamentals
 
 # Introduction
 What is Mechanistic Interpretability (Mech Interp)?  
