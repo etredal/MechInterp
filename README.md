@@ -23,12 +23,14 @@ https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html
 https://transformer-circuits.pub/2022/toy_model/index.html  
 https://arxiv.org/pdf/2406.04093
 
-Now let's define some basic concepts to get started!
-Feature: A singular segmented and specific concept than a model understands.
+Now let's define some basic concepts to get started!  
+Feature: A singular segmented and specific concept than a model understands.  
 Polysemanticity: Any neuron can potentially activate even for multiple features.  It seems that a
-combination of neuron activations are needed to trigger a certain feature in a model.
+combination of neuron activations are needed to trigger a certain feature in a model.  
 Sparse Autoencoder: A type of encoder that allows us to force sparsity, meaning that it requires
-an individual neuron or a sparse set of neurons to fire for a given neuron.
+an individual neuron or a sparse set of neurons to fire for a given neuron.  
+
+![Sparse Autoencoder Diagram](Images/SAE_diagram.png)
 
 You should also brush up on Python, NumPy, Basics of Transformers/Neural Networks, and Statistics
 before working through this.
